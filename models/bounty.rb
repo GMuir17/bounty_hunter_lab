@@ -72,9 +72,9 @@ class Bounty
     })
     sql = "SELECT * FROM bounties;"
     db.prepare("all", sql)
-    orders = db.exec_prepared("all")
+    bounties = db.exec_prepared("all")
     db.close()
-    return orders.map {|bounty| Bounty.new(bounty)}
+    return bounties.map {|bounty| Bounty.new(bounty)}
   end
 
   def Bounty.delete_all()
@@ -87,5 +87,36 @@ class Bounty
     db.exec_prepared("delete_all")
     db.close()
   end
+
+  def Bounty.find_by_name(name)
+    db = PG.connect({
+      dbname: "bounty_list",
+      host: "localhost"
+      })
+    sql = "SELECT * FROM bounties WHERE name = $1;"
+    values = [name]
+    db.prepare("find_by_name", sql)
+    results_array = db.exec_prepared("find_by_name", values)
+    bounty_hash = results_array[0]
+    bounty = Bounty.new(bounty_hash)
+    db.close()
+    return bounty
+  end
+
+  # def Bounty.find_by_id(id)
+  #   db = PG.connect({
+  #     dbname: "bounty_list",
+  #     host: "localhost"
+  #     })
+  #   sql = "SELECT * FROM bounties WHERE name = $1;"
+  #   values = [id]
+  #   db.prepare("find_by_id", sql)
+  #   results_array = db.exec_prepared("find_by_id", values)
+  #   bounty_hash = results_array[0]
+  #   bounty = Bounty.new(bounty_hash)
+  #   db.close()
+  #   return bounty
+  # end
+
 
 end
